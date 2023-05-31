@@ -1,0 +1,46 @@
+<%- include('shared/header'); -%>
+    
+<h1><%= title %></h1>
+
+<script> 
+  const frontend_api = "<%= clerk_pk %>";
+  const script = document.createElement('script');
+  script.setAttribute('data-clerk-frontend-api', frontend_api);
+  script.async = true;
+  script.src = `https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js`;
+  script.crossOrigin = "anonymous";
+  script.addEventListener('load', async function() {
+    
+    const Clerk = window.Clerk;
+    try {
+      // Load Clerk environment and session if available
+      await Clerk.load();
+
+      const navAvatar = $("#nav-avatar");
+      const signInButton = $("#sign-in");
+      const signOutButton = $("#sign-out");
+
+      Clerk.addListener(({ user }) => {
+        // Display links conditionally based on user state
+        if(user) {
+          signInButton.hide();
+          signOutButton.show();
+          if(!$("#user-avatar").length) {
+            navAvatar.after(`<img id="user-avatar" style="width: 64px; height: 64px; border-radius: 100%;" alt="user-avatar" src="${Clerk.user.imageUrl}"/>`);
+          }
+          navAvatar.hide();
+        } else {
+          signInButton.show();
+          signOutButton.hide();
+          navAvatar.show();
+          $("#user-avatar").remove();
+        }
+      });
+    } catch (err) {
+      console.error("Error starting Clerk: ", err);
+    }
+  });
+  document.body.appendChild(script);
+</script>
+
+<%- include('shared/footer'); -%>
