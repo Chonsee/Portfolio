@@ -1,2 +1,52 @@
-</body>
+        <script>
+            const signInButton = $("#sign-in");
+            const signOutButton = $("#sign-out");
+
+            /**
+             * This function only handles the control of visibility on certain sign-in sign-out elements. 
+             * Normal authentication state handling is designated to Clerk.
+             */
+            function handleLoggedIn() {
+                signInButton.hide();
+                signOutButton.show();
+            }
+            
+            /**
+             * This function only handles the control of visibility on certain sign-in sign-out elements. 
+             * Normal authentication state handling is designated to Clerk.
+             */
+            function handleSignOut() {
+                signInButton.show();
+                signOutButton.hide();
+            }
+            
+            let isAuthenticated = Boolean($("#isAuthenticated").val());
+            
+            if(isAuthenticated) {
+                handleLoggedIn();
+            } else {
+                handleSignOut();
+            }
+
+        </script>
+        <script>
+            const frontend_api = "<%= clerk_pk %>";
+            const script = document.createElement('script');
+            script.setAttribute('data-clerk-frontend-api', frontend_api);
+            script.async = true;
+            script.src = `https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js`;
+            script.crossOrigin = "anonymous";
+            script.addEventListener('load', async function() {
+                const Clerk = window.Clerk;
+                try {
+                    // Load Clerk environment and session if available
+                    await Clerk.load();
+                } catch (err) {
+                    console.error("Error starting Clerk: ", err);
+                }
+            });
+            document.body.appendChild(script);
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+    </body>
 </html>
